@@ -15,10 +15,7 @@ async def proxy_request(destination: str, request: Request):
         async with httpx.AsyncClient() as client:
             response = await client.post(destination_url, data=post_data, headers=dict(request.headers))
 
-        return Response(content=response.content, status_code=response.status_code, headers=response.headers)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Erro interno do servidor")     
+        return Response(status_code=response.status_code)   
 
 @app.get("/api/{destination:path}")
 async def redirect_request(destination: str, request: Request):
@@ -28,11 +25,8 @@ async def redirect_request(destination: str, request: Request):
         async with httpx.AsyncClient() as client:
             response = await client.get(destination_url, params=request.query_params)
 
-        return Response(content=response.content, status_code=response.status_code, headers=response.headers)
+        return Response(status_code=response.status_code)
     
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Erro interno do servidor")
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=80)
